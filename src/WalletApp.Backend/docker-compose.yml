@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  walletapi:
+    container_name: walletapp-walletapi
+    image: ${DOCKER_REGISTRY-}walletapi
+    build:
+      context: .
+      dockerfile: WalletApi/Dockerfile
+    ports: 
+      - 7122:8080
+    networks:
+      - backend-net
+
+  wallet-db:
+    container_name: walletapp-wallet-db
+    image: postgres
+    restart: always
+    ports:
+    - "54303:5432"
+    networks:
+    - backend-net
+    volumes:
+    - ./init_history.sql:/docker-entrypoint-initdb.d/init_history.sql
+    - wallet-db:/var/lib/postgresql/data
+
+volumes:
+  wallet-db:
+
+networks:
+  backend-net:
